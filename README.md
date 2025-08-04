@@ -2,7 +2,7 @@
 
 A comprehensive End-to-End test automation framework built with **Playwright** and **TypeScript** for testing web applications.
 
-## 🚀 Features
+## Features
 
 - ✅ **Cross-browser testing** (Chrome, Firefox, Safari, Mobile)
 - ✅ **Modular Page Object Model** design
@@ -14,7 +14,7 @@ A comprehensive End-to-End test automation framework built with **Playwright** a
 - ✅ **Screenshot and video capture** on failure
 - ✅ **Environment configuration** support
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 coldbrew/
@@ -47,7 +47,7 @@ coldbrew/
 └── package.json          # Project dependencies
 ```
 
-## 🛠️ Installation
+## Installation
 
 ### Prerequisites
 
@@ -77,7 +77,7 @@ coldbrew/
    npx playwright --version
    ```
 
-## 🧪 Running Tests
+## Running Tests
 
 ### UI Tests
 
@@ -153,7 +153,7 @@ npx playwright test tests/api/
 npx playwright test tests/api/integration.spec.ts
 ```
 
-## 📊 Test Reports
+## Test Reports
 
 ### Allure Reports
 
@@ -171,23 +171,7 @@ npm run report:allure:open
 npm run report:allure:export
 ```
 
-### HTML Reports
-
-```bash
-# View HTML report
-npx playwright show-report
-```
-
-### Generate Additional Reports
-```bash
-# Generate JSON report
-npx playwright test --reporter=json
-
-# Generate JUnit report
-npx playwright test --reporter=junit
-```
-
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Configuration
 
@@ -246,7 +230,7 @@ projects: [
 ]
 ```
 
-## 📝 Test Writing Guide
+## Test Writing Guide
 
 ### UI Test Structure
 
@@ -333,7 +317,7 @@ test.describe('API Tests', () => {
 });
 ```
 
-## 🚀 CI/CD Integration
+## CI/CD Integration
 
 ### GitHub Actions
 
@@ -376,36 +360,20 @@ jobs:
         path: allure-report/
 ```
 
-## 🧪 Test Types
+## Test Types
 
 - **UI Tests:** Automated browser-based end-to-end tests using Playwright and the Page Object Model
 - **API Tests:** REST API endpoint testing, authentication, and integration tests
 - **Performance Tests:** (Planned) Page load times, workflow durations, and API response time measurements
 
-## 📚 Dependencies
+## Dependencies
 
 - **@playwright/test**: Core testing framework
 - **allure-playwright**: Advanced reporting
 - **allure-commandline**: Allure report generation
 - **@types/node**: TypeScript definitions
 
-## 📝 Contribution
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📚 Further Reading
-
-- [Playwright Documentation](https://playwright.dev/docs/intro)
-- [Playwright Test API](https://playwright.dev/docs/test-api-testing)
-- [Page Object Model](https://playwright.dev/docs/pom)
-- [Allure Reporting](https://docs.qameta.io/allure/)
-- [Playwright CI Integration](https://playwright.dev/docs/ci)
-
-## 📢 Notes
+## Notes
 
 - Performance test suite is planned for future development
 - For any issues or feature requests, please open an issue on GitHub
