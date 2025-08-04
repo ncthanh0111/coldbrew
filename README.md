@@ -173,29 +173,6 @@ npm run report:allure:export
 
 ## Configuration
 
-### Environment Configuration
-
-Create `.env` file in the root directory:
-
-```env
-# Server Configuration
-SERVER_URL=https://opensource-demo.orangehrmlive.com
-BASE_URL=https://opensource-demo.orangehrmlive.com/web
-
-# User Credentials
-ADMIN_USERNAME=Admin
-ADMIN_PASSWORD=admin123
-
-# Browser Configuration
-HEADLESS=false
-SLOW_MO=1000
-
-# Test Configuration
-PARALLEL_EXECUTION=true
-WORKERS=4
-RETRY_COUNT=2
-```
-
 ### Browser Configuration
 
 The framework supports multiple browsers and devices:
