@@ -1,0 +1,34 @@
+{
+    "allure": {
+      "results": {
+        "directory": "allure-results"
+      },
+      "report": {
+        "directory": "allure-report",
+        "clean": true
+      },
+      "categories": [
+        {
+          "name": "Failed tests",
+          "matchedStatuses": ["failed"]
+        },
+        {
+          "name": "Broken tests",
+          "matchedStatuses": ["broken"]
+        },
+        {
+          "name": "Ignored tests",
+          "matchedStatuses": ["skipped"]
+        },
+        {
+          "name": "UI issues",
+          "messageRegex": ".*element.*not.*found.*"
+        }
+      ],
+      "environment": {
+        "framework": "Playwright",
+        "language": "TypeScript",
+        "browser": "Chrome, Firefox, Safari, Mobile"
+      }
+    }
+  }
