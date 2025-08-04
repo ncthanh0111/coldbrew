@@ -118,9 +118,6 @@ npm run test:all-mobile
 # Run login tests only
 npx playwright test tests/ui/login.spec.ts
 
-# Run search tests only
-npx playwright test tests/ui/search.spec.ts
-
 # Run with specific browser
 npx playwright test tests/ui/login.spec.ts --project=chromium
 ```
@@ -130,14 +127,8 @@ npx playwright test tests/ui/login.spec.ts --project=chromium
 # Run in headed mode (see browser)
 npx playwright test --headed
 
-# Run in debug mode
-npx playwright test --debug
-
 # Run with video recording
 npx playwright test --video=on
-
-# Run with specific timeout
-npx playwright test --timeout=60000
 
 # Run with specific workers (parallel execution)
 npx playwright test --workers=4
@@ -169,42 +160,6 @@ npm run report:allure:open
 
 # Generate and open report in one command
 npm run report:allure:export
-```
-
-## Configuration
-
-### Browser Configuration
-
-The framework supports multiple browsers and devices:
-
-- **Desktop**: Chrome, Firefox, Safari
-- **Mobile**: Chrome (Pixel 5), Safari (iPhone 12)
-
-Configuration is managed in `playwright.config.ts`:
-
-```typescript
-projects: [
-  {
-    name: 'chromium',
-    use: { ...devices['Desktop Chrome'] },
-  },
-  {
-    name: 'firefox',
-    use: { ...devices['Desktop Firefox'] },
-  },
-  {
-    name: 'webkit',
-    use: { ...devices['Desktop Safari'] },
-  },
-  {
-    name: 'Mobile Chrome',
-    use: { ...devices['Pixel 5'] },
-  },
-  {
-    name: 'Mobile Safari',
-    use: { ...devices['iPhone 12'] },
-  }
-]
 ```
 
 ## Test Writing Guide
@@ -292,50 +247,6 @@ test.describe('API Tests', () => {
         expect(userData).toHaveProperty('name');
     });
 });
-```
-
-## CI/CD Integration
-
-### GitHub Actions
-
-Create `.github/workflows/test.yml` for automated testing:
-
-```yaml
-name: E2E Tests
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chromium, firefox, webkit]
-    
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test --project=${{ matrix.browser }}
-    - name: Generate Allure report
-      run: npm run report:allure:generate
-    - name: Upload Allure report
-      uses: actions/upload-artifact@v3
-      with:
-        name: allure-report
-        path: allure-report/
-```
 
 ## Test Types
 
