@@ -1,16 +1,14 @@
-# E2E Automation Framework
+# ColdBrew - E2E Automation Framework
 
-A comprehensive End-to-End test automation framework built with **Playwright** and **TypeScript** for testing the OrangeHRM demo application.
+A comprehensive End-to-End test automation framework built with **Playwright** and **TypeScript** for testing web applications.
 
 ## 🚀 Features
 
 - ✅ **Cross-browser testing** (Chrome, Firefox, Safari, Mobile)
 - ✅ **Modular Page Object Model** design
 - ✅ **UI Testing** with comprehensive scenarios
-- ✅ **API Testing** (TBD - Coming Soon)
-- ✅ **Performance Testing** (TBD - Coming Soon)
+- ✅ **API Testing** with integration tests
 - ✅ **Allure Reporting** - Advanced analytics and visualization
-- ✅ **CI/CD Integration** ready
 - ✅ **Parallel test execution**
 - ✅ **Retry mechanism** for flaky tests
 - ✅ **Screenshot and video capture** on failure
@@ -18,7 +16,38 @@ A comprehensive End-to-End test automation framework built with **Playwright** a
 
 ## 📁 Project Structure
 
-## ��️ Installation
+```
+coldbrew/
+├── config/                 # Configuration files
+│   ├── apiConfig.ts       # API configuration
+│   ├── baseConfig.ts      # Base configuration
+│   └── performanceConfig.ts # Performance configuration
+├── helpers/               # Helper utilities
+│   ├── apiHelper.ts       # API helper functions
+│   └── performanceHelper.ts # Performance helper functions
+├── pages/                 # Page Object Models
+│   ├── base.page.ts       # Base page class
+│   ├── login.page.ts      # Login page
+│   ├── dashboard.page.ts  # Dashboard page
+│   ├── adminSearch.page.ts # Admin search page
+│   └── modules/           # Page modules
+│       └── navigationBar.module.ts
+├── tests/                 # Test files
+│   ├── ui/               # UI tests
+│   │   ├── login.spec.ts
+│   │   └── search.spec.ts
+│   ├── api/              # API tests
+│   │   └── integration.spec.ts
+│   └── performance/      # Performance tests (planned)
+├── utils/                 # Utility functions
+│   ├── apiUtils.ts       # API utilities
+│   └── stringUtils.ts    # String utilities
+├── playwright.config.ts   # Playwright configuration
+├── allure.config.json    # Allure reporting configuration
+└── package.json          # Project dependencies
+```
+
+## 🛠️ Installation
 
 ### Prerequisites
 
@@ -30,7 +59,7 @@ A comprehensive End-to-End test automation framework built with **Playwright** a
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd automation-framework
+   cd coldbrew
    ```
 
 2. **Install dependencies**
@@ -48,7 +77,7 @@ A comprehensive End-to-End test automation framework built with **Playwright** a
    npx playwright --version
    ```
 
-## �� Running Tests
+## 🧪 Running Tests
 
 ### UI Tests
 
@@ -114,42 +143,43 @@ npx playwright test --timeout=60000
 npx playwright test --workers=4
 ```
 
-### API Tests (TBD - Coming Soon)
+### API Tests
 
 ```bash
 # Run all API tests
-npm run test:api
+npx playwright test tests/api/
 
-# Run specific API test categories
-npm run test:api:auth
-npm run test:api:users
-npm run test:api:employees
-```
-
-### Performance Tests (TBD - Coming Soon)
-
-```bash
-# Run all performance tests
-npm run test:performance
-
-# Run specific performance test categories
-npm run test:performance:load
-npm run test:performance:workflow
-npm run test:performance:loadtest
+# Run specific API test file
+npx playwright test tests/api/integration.spec.ts
 ```
 
 ## 📊 Test Reports
 
-### View HTML Report
+### Allure Reports
+
+The framework uses Allure for advanced reporting with detailed analytics and visualizations.
+
+#### Generate and view Allure report
 ```bash
+# Generate Allure report
+npm run report:allure:generate
+
+# Open Allure report in browser
+npm run report:allure:open
+
+# Generate and open report in one command
+npm run report:allure:export
+```
+
+### HTML Reports
+
+```bash
+# View HTML report
 npx playwright show-report
 ```
 
-### Generate Reports
+### Generate Additional Reports
 ```bash
-# Generate HTML report
-npx playwright test --reporter=html
-
 # Generate JSON report
 npx playwright test --reporter=json
 
@@ -157,7 +187,7 @@ npx playwright test --reporter=json
 npx playwright test --reporter=junit
 ```
 
-## �� Configuration
+## ⚙️ Configuration
 
 ### Environment Configuration
 
@@ -184,22 +214,39 @@ RETRY_COUNT=2
 
 ### Browser Configuration
 
-Update `playwright.config.ts` to modify browser settings:
+The framework supports multiple browsers and devices:
+
+- **Desktop**: Chrome, Firefox, Safari
+- **Mobile**: Chrome (Pixel 5), Safari (iPhone 12)
+
+Configuration is managed in `playwright.config.ts`:
 
 ```typescript
 projects: [
   {
     name: 'chromium',
-    use: { 
-      ...devices['Desktop Chrome'],
-      viewport: { width: 1920, height: 1080 }
-    },
+    use: { ...devices['Desktop Chrome'] },
   },
-  // Add more browser configurations
+  {
+    name: 'firefox',
+    use: { ...devices['Desktop Firefox'] },
+  },
+  {
+    name: 'webkit',
+    use: { ...devices['Desktop Safari'] },
+  },
+  {
+    name: 'Mobile Chrome',
+    use: { ...devices['Pixel 5'] },
+  },
+  {
+    name: 'Mobile Safari',
+    use: { ...devices['iPhone 12'] },
+  }
 ]
 ```
 
-## �� Test Writing Guide
+## 📝 Test Writing Guide
 
 ### UI Test Structure
 
@@ -263,14 +310,36 @@ export class ExamplePage extends BasePage {
 }
 ```
 
+### API Test Structure
+
+```typescript
+// tests/api/example.spec.ts
+import { test, expect } from '@playwright/test';
+
+test.describe('API Tests', () => {
+    test('should get user data', async ({ request }) => {
+        // Arrange
+        const baseURL = 'https://api.example.com';
+        
+        // Act
+        const response = await request.get(`${baseURL}/users/1`);
+        
+        // Assert
+        expect(response.status()).toBe(200);
+        const userData = await response.json();
+        expect(userData).toHaveProperty('id');
+        expect(userData).toHaveProperty('name');
+    });
+});
+```
+
 ## 🚀 CI/CD Integration
 
 ### GitHub Actions
 
-The project includes GitHub Actions workflow for automated testing:
+Create `.github/workflows/test.yml` for automated testing:
 
 ```yaml
-# .github/workflows/test.yml
 name: E2E Tests
 
 on:
@@ -298,36 +367,51 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test --project=${{ matrix.browser }}
+    - name: Generate Allure report
+      run: npm run report:allure:generate
+    - name: Upload Allure report
+      uses: actions/upload-artifact@v3
+      with:
+        name: allure-report
+        path: allure-report/
 ```
 
 ## 🧪 Test Types
 
-- **UI Tests:** Automated browser-based end-to-end tests using Playwright and the Page Object Model.
-- **API Tests:** (TBD) Will cover REST API endpoints, authentication, CRUD, and error handling.
-- **Performance Tests:** (TBD) Will measure page load times, workflow durations, and API response times.
+- **UI Tests:** Automated browser-based end-to-end tests using Playwright and the Page Object Model
+- **API Tests:** REST API endpoint testing, authentication, and integration tests
+- **Performance Tests:** (Planned) Page load times, workflow durations, and API response time measurements
 
----
+## 📚 Dependencies
+
+- **@playwright/test**: Core testing framework
+- **allure-playwright**: Advanced reporting
+- **allure-commandline**: Allure report generation
+- **@types/node**: TypeScript definitions
 
 ## 📝 Contribution
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes and add/modify tests
-4. Submit a pull request
-
----
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📚 Further Reading
 
 - [Playwright Documentation](https://playwright.dev/docs/intro)
 - [Playwright Test API](https://playwright.dev/docs/test-api-testing)
 - [Page Object Model](https://playwright.dev/docs/pom)
-- [Playwright Reporters](https://playwright.dev/docs/test-reporters)
+- [Allure Reporting](https://docs.qameta.io/allure/)
 - [Playwright CI Integration](https://playwright.dev/docs/ci)
-
----
 
 ## 📢 Notes
 
-- **API and Performance test suites are under development (TBD).**
-- For any issues or feature requests, please open an issue on GitHub.
+- Performance test suite is planned for future development
+- For any issues or feature requests, please open an issue on GitHub
+- Make sure to run `npm run report:allure:export` after tests to view detailed reports
+
+---
+
+**Author:** Thanh Nguyen  
+**Version:** 1.0.0  
