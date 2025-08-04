@@ -10,8 +10,8 @@
     "test:ui:safari": "playwright test tests/ui --project=webkit --headed --reporter=allure-playwright",
     "test:ui:mobile": "playwright test tests/ui --project='Mobile Chrome' --headed --reporter=allure-playwright",
     "test:ui:ios": "playwright test tests/ui --project='Mobile Safari' --reporter=allure-playwright",
-    "test:all-browsers": "playwright test --project=chromium --project=firefox --project=webkit",
-    "test:all-mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:ui:all-browsers": "playwright test tests/ui --project=chromium --project=firefox --project=webkit",
+    "test:ui:all-mobile": "playwright test tests/ui --project='Mobile Chrome' --project='Mobile Safari'",
     "report:allure:generate": "allure generate allure-results --clean -o allure-report",
     "report:allure:open": "allure open allure-report",
     "report:allure:export": "allure generate allure-results --clean -o allure-report && allure open allure-report"
