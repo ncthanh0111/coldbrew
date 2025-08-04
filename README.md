@@ -247,6 +247,7 @@ test.describe('API Tests', () => {
         expect(userData).toHaveProperty('name');
     });
 });
+```
 
 ## Test Types
 
