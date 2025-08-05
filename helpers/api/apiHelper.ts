@@ -1,10 +1,12 @@
 import { APIRequestContext, request, expect } from '@playwright/test';
-import { ApiConfig } from '../config/apiConfig';
+import { ApiConfig } from '../../config/apiConfig';
+import { UserApiHelper } from './userHelper';
 
 export class ApiHelper {
     private request: APIRequestContext;
     private baseURL: string;
-    private authToken: string | null = null;
+    private cookie: string | null = null;
+    public userApi: UserApiHelper;
 
     constructor(baseURL: string = ApiConfig.BASE_URLS.PROD) {
         this.baseURL = baseURL;
@@ -15,31 +17,38 @@ export class ApiHelper {
             baseURL: this.baseURL,
             extraHTTPHeaders: ApiConfig.HEADERS.DEFAULT
         });
+
     }
 
     async login(username: string, password: string): Promise<string> {
         const response = await this.request.post(ApiConfig.ENDPOINTS.AUTH.LOGIN, {
-            data: { username, password }
+            form: {
+                username: username,
+                password: password
+            }
         });
 
         expect(response.status()).toBe(200);
         const data = await response.json();
-        this.authToken = data.data.token;
+        this.cookie = data.cookies.find(cookie => cookie.name === 'orangehrm')?.value;
         
         // Update headers with auth token
         this.request = await request.newContext({
             baseURL: this.baseURL,
             extraHTTPHeaders: {
                 ...ApiConfig.HEADERS.DEFAULT,
-                'Authorization': `Bearer ${this.authToken}`
+                'Cookie': `orangehrm=${this.cookie}`
             }
         });
 
+        this.userApi = new UserApiHelper(this.request, this.baseURL);
+        this.userApi.setCookie(this.cookie as string);
+
         // Ensure authToken is always a string when returned
-        if (this.authToken === null) {
+        if (this.cookie === null) {
             throw new Error('Login failed: authToken is null');
         }
-        return this.authToken;
+        return this.cookie;
     }
 
     async get(endpoint: string, params?: Record<string, any>): Promise<any> {

@@ -9,7 +9,7 @@ export const ApiConfig = {
     // API Endpoints
     ENDPOINTS: {
         AUTH: {
-            LOGIN: '/auth/login'
+            LOGIN: '/web/index.php/auth/validate'
         },
         USERS: {
             LIST: 'web/index.php/api/v2/admin/users'
@@ -25,7 +25,7 @@ export const ApiConfig = {
         AUTH: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': 'Bearer {token}'
+            'Cookie': 'orangehrm={token}'
         }
     },
     

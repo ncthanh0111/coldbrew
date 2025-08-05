@@ -1,50 +1,59 @@
 # ColdBrew - E2E Automation Framework
 
-A comprehensive End-to-End test automation framework built with **Playwright** and **TypeScript** for testing web applications.
+A comprehensive End-to-End test automation framework built with **Playwright** and **TypeScript** for testing web applications with advanced API testing capabilities.
 
 ## Features
 
-- ✅ **Cross-browser testing** (Chrome, Firefox, Safari, Mobile)
-- ✅ **Modular Page Object Model** design
-- ✅ **UI Testing** with comprehensive scenarios
-- ✅ **API Testing** with integration tests
-- ✅ **Allure Reporting** - Advanced analytics and visualization
-- ✅ **Parallel test execution**
-- ✅ **Retry mechanism** for flaky tests
-- ✅ **Screenshot and video capture** on failure
-- ✅ **Environment configuration** support
+- **Cross-browser testing** (Chrome, Firefox, Safari, Mobile)
+- **Modular Page Object Model** design
+- **UI Testing** with comprehensive scenarios
+- **API Testing** with integration tests and models
+- **Performance Testing** (TBD comming soon)
+- **Allure Reporting** - Advanced analytics and visualization
+- **Parallel test execution**
+- **Retry mechanism** for flaky tests
+- **Screenshot and video capture** on failure
+- **Environment configuration** support
+- **ESLint** code quality enforcement
 
 ## Project Structure
 
 ```
 coldbrew/
-├── config/                 # Configuration files
-│   ├── apiConfig.ts       # API configuration
-│   ├── baseConfig.ts      # Base configuration
-│   └── performanceConfig.ts # Performance configuration
-├── helpers/               # Helper utilities
-│   ├── apiHelper.ts       # API helper functions
-│   └── performanceHelper.ts # Performance helper functions
-├── pages/                 # Page Object Models
-│   ├── base.page.ts       # Base page class
-│   ├── login.page.ts      # Login page
-│   ├── dashboard.page.ts  # Dashboard page
-│   ├── adminSearch.page.ts # Admin search page
-│   └── modules/           # Page modules
+├── config/                    # Configuration files
+│   ├── apiConfig.ts          # API configuration
+│   ├── baseConfig.ts         # Base configuration
+│   └── performanceConfig.ts  # Performance configuration
+├── helpers/                  # Helper utilities
+│   ├── api/                  # API helpers
+│   │   ├── apiHelper.ts      # Main API helper
+│   │   └── userHelper.ts     # User-specific API helper
+│   └── performance/          # Performance helpers
+├── models/                   # API Data Models
+│   ├── user.model.ts         # User model
+│   ├── employee.model.ts     # Employee model
+│   └── userRole.model.ts     # User role model
+├── pages/                    # Page Object Models
+│   ├── base.page.ts          # Base page class
+│   ├── login.page.ts         # Login page
+│   ├── dashboard.page.ts     # Dashboard page
+│   ├── adminSearch.page.ts   # Admin search page
+│   └── modules/              # Page modules
 │       └── navigationBar.module.ts
-├── tests/                 # Test files
-│   ├── ui/               # UI tests
+├── tests/                    # Test files
+│   ├── ui/                   # UI tests
 │   │   ├── login.spec.ts
 │   │   └── search.spec.ts
-│   ├── api/              # API tests
+│   ├── api/                  # API tests
 │   │   └── integration.spec.ts
-│   └── performance/      # Performance tests (planned)
-├── utils/                 # Utility functions
-│   ├── apiUtils.ts       # API utilities
-│   └── stringUtils.ts    # String utilities
-├── playwright.config.ts   # Playwright configuration
-├── allure.config.json    # Allure reporting configuration
-└── package.json          # Project dependencies
+│   └── performance/          # Performance tests (planned)
+├── utils/                    # Utility functions
+│   ├── apiUtils.ts           # API utilities
+│   └── stringUtils.ts        # String utilities
+├── playwright.config.ts      # Playwright configuration
+├── allure.config.json        # Allure reporting configuration
+├── eslint.config.js          # ESLint configuration
+└── package.json              # Project dependencies
 ```
 
 ## Installation
@@ -91,26 +100,13 @@ npm run test
 # Chrome (headed mode - with browser UI)
 npm run test:ui:chrome
 
-# Firefox (headed mode)
-npm run test:ui:firefox
-
-# Safari (headed mode)
-npm run test:ui:safari
-
-# Mobile Chrome (headed mode)
-npm run test:ui:mobile
-
-# Mobile Safari
-npm run test:ui:ios
-```
-
 #### Run cross-browser tests
 ```bash
 # All desktop browsers
-npm run test:all-browsers
+npm run test:ui:all-browsers
 
-# All mobile browsers
-npm run test:all-mobile
+# All mobile browsers (Comming soon)
+npm run test:ui:all-mobile
 ```
 
 #### Run specific test files
@@ -126,6 +122,7 @@ npx playwright test tests/ui/login.spec.ts --project=chromium
 ```bash
 # Run in headed mode (see browser)
 npx playwright test --headed
+```
 
 # Run with video recording
 npx playwright test --video=on
@@ -160,6 +157,19 @@ npm run report:allure:open
 
 # Generate and open report in one command
 npm run report:allure:export
+```
+
+### HTML Reports
+
+```bash
+# View HTML report
+npx playwright show-report
+```
+
+### Generate Additional Reports
+```bash
+# Generate JSON report
+npx playwright test --reporter=json
 ```
 
 ## Test Writing Guide
@@ -231,20 +241,27 @@ export class ExamplePage extends BasePage {
 ```typescript
 // tests/api/example.spec.ts
 import { test, expect } from '@playwright/test';
+import { ApiHelper } from '../../helpers/api/apiHelper';
+import { User } from '../../models/user.model';
 
 test.describe('API Tests', () => {
+    let apiHelper: ApiHelper;
+
+    test.beforeEach(async ({ request }) => {
+        apiHelper = new ApiHelper();
+        await apiHelper.initialize();
+    });
+
     test('should get user data', async ({ request }) => {
-        // Arrange
-        const baseURL = 'https://api.example.com';
+        // Login first
+        await apiHelper.login('Admin', 'admin123');
         
-        // Act
-        const response = await request.get(`${baseURL}/users/1`);
+        // Get users
+        const users = await apiHelper.userApi.getUsers();
         
         // Assert
-        expect(response.status()).toBe(200);
-        const userData = await response.json();
-        expect(userData).toHaveProperty('id');
-        expect(userData).toHaveProperty('name');
+        expect(users.data).toBeDefined();
+        expect(Array.isArray(users.data)).toBe(true);
     });
 });
 ```
@@ -252,7 +269,7 @@ test.describe('API Tests', () => {
 ## Test Types
 
 - **UI Tests:** Automated browser-based end-to-end tests using Playwright and the Page Object Model
-- **API Tests:** REST API endpoint testing, authentication, and integration tests
+- **API Tests:** REST API endpoint testing with models, authentication, and integration tests
 - **Performance Tests:** (Planned) Page load times, workflow durations, and API response time measurements
 
 ## Dependencies
@@ -261,14 +278,48 @@ test.describe('API Tests', () => {
 - **allure-playwright**: Advanced reporting
 - **allure-commandline**: Allure report generation
 - **@types/node**: TypeScript definitions
+- **eslint**: Code quality enforcement
+- **@typescript-eslint/eslint-plugin**: TypeScript ESLint plugin
+- **@typescript-eslint/parser**: TypeScript ESLint parser
+
+## Code Quality
+
+### ESLint Configuration
+
+The project uses ESLint for code quality enforcement:
+
+```bash
+# Run ESLint
+npm run lint
+
+# Run ESLint with auto-fix
+npx eslint . --ext .ts --fix
+```
+
+### TypeScript Models
+
+The framework includes TypeScript models for API data structures:
+
+```typescript
+// models/user.model.ts
+export interface User {
+    id: number;
+    userName: string;
+    deleted: boolean;
+    status: boolean;
+    employee: Employee;
+    userRole: UserRole;
+}
+```
 
 ## Notes
 
 - Performance test suite is planned for future development
 - For any issues or feature requests, please open an issue on GitHub
 - Make sure to run `npm run report:allure:export` after tests to view detailed reports
+- Run `npm run lint` before committing to ensure code quality
 
 ---
 
 **Author:** Thanh Nguyen  
-**Version:** 1.0.0  
+**Version:** 1.0.0
