@@ -61,7 +61,7 @@ coldbrew/
 ### Prerequisites
 
 - **Node.js** (version 16 or higher)
-- **npm** or **yarn**
+- **npm** (Node Package Manager)
 
 ### Setup
 
@@ -121,9 +121,6 @@ npx playwright test tests/ui/login.spec.ts --project=chromium
 
 #### Run tests with specific options
 ```bash
-# Run in headed mode (see browser)
-npx playwright test --headed
-
 # Run with video recording
 npx playwright test --video=on
 
@@ -145,7 +142,7 @@ npx playwright test tests/api/integration.spec.ts
 
 ### Allure Reports
 
-The framework uses Allure for advanced reporting with detailed analytics and visualizations.
+Allure is a **flexible, lightweight multi-language test reporting tool** that provides detailed insights into test execution and helps teams understand what went wrong during test runs.
 
 #### Generate and view Allure report
 ```bash
@@ -264,6 +261,55 @@ test.describe('API Tests', () => {
         expect(Array.isArray(users.data)).toBe(true);
     });
 });
+```
+
+## CI/CD Integration (GitHub Actions Workflow)
+
+GitHub Actions is a **continuous integration and continuous deployment (CI/CD)** platform that allows you to automate your build, test, and deployment pipeline directly in your GitHub repository.
+
+#### **Easy Configuration**
+Create `.github/workflows/test.yml` for automated testing:
+
+```yaml
+# .github/workflows/test.yml
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test --project=${{ matrix.browser }}
+    - name: Generate Allure report
+      run: npm run report:allure:generate
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          test-results/
+          allure-results/
+          allure-report/
 ```
 
 ## Test Types
