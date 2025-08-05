@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test --reporter=allure-playwright",
+    "test": "playwright test tests/ui --reporter=allure-playwright",
     "test:ui:chrome": "playwright test tests/ui --project=chromium --headed --reporter=allure-playwright",
     "test:ui:firefox": "playwright test tests/ui --project=firefox --headed --reporter=allure-playwright",
     "test:ui:safari": "playwright test tests/ui --project=webkit --headed --reporter=allure-playwright",

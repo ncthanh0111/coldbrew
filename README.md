@@ -10,10 +10,7 @@ A comprehensive End-to-End test automation framework built with **Playwright** a
 - **API Testing** with integration tests and models
 - **Performance Testing** (TBD comming soon)
 - **Allure Reporting** - Advanced analytics and visualization
-- **Parallel test execution**
-- **Retry mechanism** for flaky tests
-- **Screenshot and video capture** on failure
-- **Environment configuration** support
+- **GitHub Actions** - Automated CI/CD pipeline with matrix builds across browsers
 - **ESLint** code quality enforcement
 
 ## Project Structure
