@@ -99,6 +99,7 @@ npm run test
 ```bash
 # Chrome (headed mode - with browser UI)
 npm run test:ui:chrome
+```
 
 #### Run cross-browser tests
 ```bash
@@ -122,7 +123,6 @@ npx playwright test tests/ui/login.spec.ts --project=chromium
 ```bash
 # Run in headed mode (see browser)
 npx playwright test --headed
-```
 
 # Run with video recording
 npx playwright test --video=on
